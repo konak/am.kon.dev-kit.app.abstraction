@@ -1,0 +1,21 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{20D27319-45A8-4BF5-A86B-6D21FFE6BCAF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "am.kon.dev-kit.app.abstraction", "src\am.kon.dev-kit.app.abstraction\am.kon.dev-kit.app.abstraction.csproj", "{DE3D2F4A-34EF-490B-A91A-36772A2AD7CE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{DE3D2F4A-34EF-490B-A91A-36772A2AD7CE} = {20D27319-45A8-4BF5-A86B-6D21FFE6BCAF}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DE3D2F4A-34EF-490B-A91A-36772A2AD7CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE3D2F4A-34EF-490B-A91A-36772A2AD7CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE3D2F4A-34EF-490B-A91A-36772A2AD7CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE3D2F4A-34EF-490B-A91A-36772A2AD7CE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
