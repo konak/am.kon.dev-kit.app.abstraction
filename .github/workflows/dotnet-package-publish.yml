@@ -1,0 +1,74 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: .net package publish to nuget
+
+on:
+  push:
+    branches: [ "beta", "release" ]
+  pull_request:
+    branches: [ "beta", "release" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 3.1
+          
+      - name: Restore dependencies
+        run: dotnet restore
+        
+      - name: Determine Version
+        id: versioning
+        run: |
+          # Get the branch name
+          BRANCH=${{ github.ref_name }}
+          echo "Branch: $BRANCH"
+
+          # Get the latest tag or use 1.0.0.0 as default
+          VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo "1.0.0.0")
+          echo "Current Version: $VERSION"
+
+          # Increment version based on branch
+          if [ "$BRANCH" == "beta" ]; then
+            # Beta version - Increment revision and append '-beta'
+            NEW_VERSION=$(echo $VERSION | awk -F. -v OFS=. '{$4 += 1 ; print}')-beta
+          elif [ "$BRANCH" == "release" ]; then
+            # Release version - Increment revision only
+            NEW_VERSION=$(echo $VERSION | awk -F. -v OFS=. '{$4 += 1 ; print}')
+          fi
+
+          echo "New Version: $NEW_VERSION"
+          echo "VERSION=$NEW_VERSION" >> $GITHUB_ENV
+        
+      - name: Update PackageVersion in .csproj
+        run: |
+          sed -i 's|<PackageVersion>.*</PackageVersion>|<PackageVersion>'$VERSION'</PackageVersion>|' src/am.kon.dev-kit.app.abstraction/am.kon.dev-kit.app.abstraction.csproj
+
+      - name: Restore Dependencies
+        run: dotnet restore
+      
+      - name: Build
+        run: dotnet build --no-restore --configuration Release
+        
+      - name: Test
+        run: dotnet test --no-build --verbosity normal
+        
+      - name: Pack
+        run: dotnet pack --output ./packages --no-build --no-restore
+        
+      - name: Push
+        env:
+          api_secret: ${{ secrets.NUGET_PUBLISH_SECRET }}
+        run: |
+          dotnet nuget push ./packages/am.kon.dev-kit.app.abstraction.*.nupkg --api-key "$api_secret" --source https://api.nuget.org/v3/index.json --skip-duplicate
+          
